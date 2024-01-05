@@ -13,6 +13,32 @@
     sndst00m.markdown-github-dark-pack
   ];
 in {
+  home.packages = lib.attrValues {
+    inherit
+      (pkgs)
+      bun
+      ccls
+      clang
+      clang-tools
+      cmake
+      nodejs
+      zig
+      zls
+      python311
+      pipenv
+      ;
+
+    inherit
+      (pkgs.nodePackages_latest)
+      pnpm
+      ;
+
+    inherit
+      (pkgs.python311Packages)
+      pip
+      ;
+  };
+
   programs.vscode = {
     enable = true;
     mutableExtensionsDir = true;

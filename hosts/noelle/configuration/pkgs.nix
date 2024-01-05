@@ -56,7 +56,5 @@
 
     feh
     xfce.thunar
-
-    pipenv
   ];
 }

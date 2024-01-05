@@ -217,9 +217,8 @@ in {
           "network"
           "group/group-pulseaudio"
           "group/group-backlight"
-          "battery"
-          "clock#date"
           "clock"
+          "battery"
           "group/group-power"
         ];
         "hyprland/window" = {
@@ -331,8 +330,7 @@ in {
           format-icons = ["󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
         };
         clock = {
-          format = formatIcons "#88C0D0CC" "󱑎" + " {:%I:%M %p}";
-          format-alt = formatIcons "#88C0D0CC" "󱑎" + " {:%H:%M}";
+          format = "{:%a %d %b :%I:%M %p}";
         };
         "clock#date" = {
           format = formatIcons "#88C0D0CC" "󰃶" + " {:%a %d %b}";
@@ -349,8 +347,6 @@ in {
           };
           modules = [
             "custom/power"
-            "custom/quit"
-            "custom/lock"
             "custom/suspend"
             "custom/reboot"
           ];
@@ -396,7 +392,7 @@ in {
         border-radius: 0;
         min-height: 0;
         min-width: 0;
-        font-family: "Material Design Icons", monospace;
+        font-family: "Material Design Icons", "Roboto" ,monospace;
         font-size: 1rem;
       }
 
@@ -530,8 +526,5 @@ in {
         padding: 1.37em;
       }
     '';
-
-    systemd.enable = true;
-    systemd.target = "graphical-session.target";
   };
 }
