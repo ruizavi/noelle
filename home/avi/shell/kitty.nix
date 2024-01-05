@@ -6,7 +6,7 @@
 }: {
   programs.kitty = {
     enable = true;
-    extraSettings = ''
+    extraConfig = ''
       # vim:ft=kitty
 
       ## name:     Catppuccin Mocha 🌿

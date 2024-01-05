@@ -13,7 +13,7 @@
 
   boot = {
     initrd = {
-      # supportedFilesystems = ["btrfs"];
+      supportedFilesystems = ["btrfs"];
       systemd.enable = true;
       kernelModules = ["amdgpu"];
     };
@@ -71,7 +71,7 @@
 
   services = {
     acpid.enable = true;
-    # btrfs.autoScrub.enable = true;
+    btrfs.autoScrub.enable = true;
     logind.lidSwitch = "suspend";
     thermald.enable = true;
     tlp = {
@@ -88,6 +88,19 @@
 
     upower.enable = true;
 
+    greetd = let
+      session = {
+        command = "${lib.getExe config.programs.hyprland.package}";
+        user = "avi";
+      };
+    in {
+      enable = true;
+      settings = {
+        default_session = session;
+        # initial_session = session;
+      };
+    };
+
     xserver = {
       enable = true;
       libinput = {
@@ -97,11 +110,6 @@
       desktopManager = {
         xfce.enable = true;
       };
-
-      displayManager = {
-        sddm.enable = true;
-      };
-
       layout = "us";
       xkbVariant = "altgr-intl";
       videoDrivers = ["amdgpu"];

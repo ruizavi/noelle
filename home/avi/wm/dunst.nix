@@ -14,7 +14,7 @@
         offset = "0x15";
         font = "Lexend 12";
         corner_radius = 10;
-        origin = "top-center";
+        origin = "top-right";
         notification_limit = 3;
         idle_threshold = 120;
         ignore_newline = "no";

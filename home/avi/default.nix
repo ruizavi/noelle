@@ -9,9 +9,11 @@
   imports =
     [
       inputs.hyprland.homeManagerModules.default
+      inputs.anyrun.homeManagerModules.default
       ./shell
       ./wm
       ./gtk.nix
+      ./vscode.nix
     ]
     ++ (builtins.attrValues outputs.homeManagerModules);
 

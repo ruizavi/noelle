@@ -56,7 +56,6 @@
 
     feh
     xfce.thunar
-    rofi
 
     pipenv
   ];

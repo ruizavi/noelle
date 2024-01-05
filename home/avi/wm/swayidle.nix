@@ -19,10 +19,6 @@ in {
         event = "before-sleep";
         command = "${pkgs.systemd}/bin/loginctl lock-session";
       }
-      {
-        event = "lock";
-        command = "${pkgs.gtklock}/bin/gtklock";
-      }
     ];
     timeouts = [
       {

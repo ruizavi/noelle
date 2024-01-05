@@ -23,7 +23,7 @@
       ];
 
       services = {
-        lightdm.enableGnomeKeyring = true;
+        greetd.enableGnomeKeyring = false;
         login.enableGnomeKeyring = true;
       };
     };
