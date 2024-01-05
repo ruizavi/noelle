@@ -23,7 +23,7 @@
       ];
 
       services = {
-        greetd.enableGnomeKeyring = false;
+        greetd.enableGnomeKeyring = true;
         login.enableGnomeKeyring = true;
       };
     };

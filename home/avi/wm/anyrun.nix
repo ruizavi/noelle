@@ -34,7 +34,7 @@
       }
 
       #match:selected {
-        background: rgba(203, 166, 247, 0.5);
+        background: rgba(203, 166, 247, 1);
       }
 
       #match {
@@ -47,7 +47,7 @@
       }
 
       box#main {
-        background: rgba(30, 30, 46, 0.5);
+        background: rgba(30, 30, 46, 1);
         border: 1px solid #28283d;
         border-radius: 24px;
         padding: 8px;

@@ -254,13 +254,13 @@ in {
       bind = $mainMod, backspace, exec, ~/.config/hypr/scripts/logoutlaunch.sh 1 # logout menu
 
       # Application shortcuts
-      bind = $mainMod, T, exec, $term  # open terminal
+      bind = $mainMod, return, exec, $term  # open terminal
       bind = $mainMod, E, exec, $file # open file manager
       bind = $mainMod, C, exec, $editor # open vscode
       bind = $mainMod, F, exec, $browser # open browser
 
       # Rofi is toggled on/off if you repeat the key presses
-      bind = $mainMod, A, exec, anyrun
+      bind = $mainMod, space, exec, pkill anyrun || anyrun
 
       # Audio control
       bind  = , F10, exec, ~/.config/hypr/scripts/volumecontrol.sh -o m # toggle audio mute
@@ -351,6 +351,7 @@ in {
       bind = $mainMod ALT, XF86MonBrightnessUp, exec, ${pkgs.hyprshade} off
     '';
   };
+
   home = {
     file = {
       ".config/hypr/scripts/batterynotify.sh" = {
@@ -525,6 +526,16 @@ in {
                   notify_mute ;;
               *) print_error ;;
           esac
+        '';
+      };
+      ".config/hypr/scripts/dontkillsteam.sh" = {
+        executable = true;
+        text = ''
+          if [[ $(hyprctl activewindow -j | jq -r ".class") == "Steam" ]]; then
+              xdotool windowunmap $(xdotool getactivewindow)
+          else
+              hyprctl dispatch killactive ""
+          fi
         '';
       };
     };

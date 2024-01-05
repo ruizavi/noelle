@@ -4,6 +4,6 @@
     ./hypr.nix
     ./swayidle.nix
     ./waybar.nix
-    ./anyrun
+    ./anyrun.nix
   ];
 }
