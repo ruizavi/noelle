@@ -13,6 +13,7 @@
     ./cli.nix
     ./git.nix
     ./nix.nix
+    ./kitty.nix
   ];
 
   home = {
