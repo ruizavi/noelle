@@ -53,6 +53,7 @@
 
     packages = with pkgs; [
       spotify
+      appflowy
     ];
   };
 }

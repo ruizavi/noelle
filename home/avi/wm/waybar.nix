@@ -178,6 +178,7 @@
 {
   lib,
   pkgs,
+  config,
   ...
 }: let
   _ = lib.getExe;
@@ -196,11 +197,13 @@ in {
     settings = {
       mainBar = {
         layer = "top";
-        position = "top";
+        position = "left";
         exclusive = true;
         passthrough = false;
         fixed-center = true;
         gtk-layer-shell = true;
+        width = 42;
+
         spacing = 0;
         margin-top = 0;
         margin-right = 0;
@@ -208,41 +211,58 @@ in {
         margin-left = 0;
         modules-left = [
           "custom/search"
-          "hyprland/workspaces"
+          "custom/weather"
         ];
         modules-center = [
-          "hyprland/window"
+          "hyprland/workspaces"
         ];
         modules-right = [
-          "network"
           "group/group-pulseaudio"
           "group/group-backlight"
-          "clock"
           "battery"
+          "network"
+          "clock"
           "group/group-power"
         ];
         "hyprland/window" = {
-          format = "  {}";
-          separate-outputs = true;
+          format = "{}";
+          separate-outputs = false;
           rewrite = {
-            "$\{USER\}@$\{set_sysname\}:(.*)" = "";
             "(.*) — Mozilla Firefox" = "󰈹";
             "(.*)Mozilla Firefox" = "󰈹";
             "(.*) - Visual Studio Code" = "󰨞";
             "(.*)Visual Studio Code" = "󰨞";
-            "(.*) — Dolphin" = "󰉋";
+            "(.*) — Thunar" = "󰉋";
             "(.*)Spotify" = "󰓇";
-            "(.*)Steam" = "󰓓";
+            "(${config.home.username}@noelle):(.*)" = "";
           };
+          "max-length" = 1;
         };
         "custom/search" = {
           format = " ";
           tooltip = false;
           on-click = "sh -c 'anyrun'";
         };
-        user = {
-          format = "{user}";
-          icon = false;
+        "custom/weather" = let
+          weather = pkgs.stdenv.mkDerivation {
+            name = "waybar-wttr";
+            buildInputs = [
+              (pkgs.python39.withPackages
+                (pythonPackages: with pythonPackages; [requests pyquery]))
+            ];
+            unpackPhase = "true";
+            installPhase = ''
+              mkdir -p $out/bin
+              cp ${./weather.py} $out/bin/weather
+              chmod +x $out/bin/weather
+            '';
+          };
+        in {
+          format = "{}";
+          tooltip = true;
+          interval = 30;
+          exec = "${weather}/bin/weather";
+          return-type = "json";
         };
         "hyprland/workspaces" = {
           active-only = false;
@@ -252,8 +272,8 @@ in {
           format = "{name}";
         };
         network = {
-          format-wifi = formatIcons "#88C0D0CC" "󰖩";
-          format-ethernet = formatIcons "#88C0D0CC" "󰈀";
+          format-wifi = formatIcons "#B48EADCC" "󰖩";
+          format-ethernet = formatIcons "#B48EADCC" "󰈀";
           format-disconnected = formatIcons "#BF616ACC" "󰖪";
           tooltip-format = ''
             󰅃 {bandwidthUpBytes} 󰅀 {bandwidthDownBytes}
@@ -274,25 +294,16 @@ in {
         "pulseaudio/slider" = {
           min = 0;
           max = 100;
-          orientation = "horizontal";
+          orientation = "vertical";
         };
         pulseaudio = {
           tooltip = false;
-          format = formatIcons "#88C0D0CC" "{icon}";
+          format = formatIcons "#94e2d5CC" "{icon}";
           format-muted = formatIcons "#BF616ACC" "󰖁";
           format-icons = {default = ["󰕿" "󰖀" "󰕾"];};
           on-click = "${_ pamixer} -t";
           on-scroll-up = "${_ pamixer} -d 1";
           on-scroll-down = "${_ pamixer} -i 1";
-        };
-        "pulseaudio#microphone" = {
-          tooltip = false;
-          format = "{format_source}";
-          format-source = formatIcons "#88C0D0CC" "󰍬" + " {volume}%";
-          format-source-muted = formatIcons "#BF616ACC" "󰍭";
-          on-click = "${_ pamixer} --default-source -t";
-          on-scroll-up = "${_ pamixer} --default-source -d 1";
-          on-scroll-down = "${_ pamixer} --default-source -i 1";
         };
         "group/group-backlight" = {
           orientation = "inherit";
@@ -309,11 +320,11 @@ in {
         "backlight/slider" = {
           min = 0;
           max = 100;
-          orientation = "horizontal";
+          orientation = "vertical";
         };
         backlight = {
           tooltip = false;
-          format = formatIcons "#88C0D0CC" "{icon}";
+          format = formatIcons "#f9e2afCC" "{icon}";
           format-icons = ["󰋙" "󰫃" "󰫄" "󰫅" "󰫆" "󰫇" "󰫈"];
           on-scroll-up = "${_ brightnessctl} -q s 1%-";
           on-scroll-down = "${_ brightnessctl} -q s +1%";
@@ -324,13 +335,18 @@ in {
             critical = 15;
           };
           tooltip-format = "{timeTo}, {capacity}%";
-          format = formatIcons "#88C0D0CC" "{icon}" + " {capacity}%";
-          format-charging = formatIcons "#A3BE8CCC" "󰂄" + " {capacity}%";
-          format-plugged = formatIcons "#A3BE8CCC" "󰚥" + " {capacity}%";
+          format = formatIcons "#a6e3a1CC" "{icon}";
+          format-charging = formatIcons "#A3BE8CCC" "󰂄";
+          format-plugged = formatIcons "#A3BE8CCC" "󰚥";
           format-icons = ["󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
         };
         clock = {
-          format = "{:%a %d %b :%I:%M %p}";
+          format = ''
+            {:%H
+            %M}'';
+          tooltip-format = ''
+            <big>{:%Y %B}</big>
+            <tt><small>{calendar}</small></tt>'';
         };
         "clock#date" = {
           format = formatIcons "#88C0D0CC" "󰃶" + " {:%a %d %b}";
@@ -380,151 +396,181 @@ in {
     };
 
     style = ''
-      @define-color Background #000000;
-      @define-color Foreground #ffffff;
-      @define-color Accent #88C0D0;
-      @define-color Error #BF616A;
-      @define-color Warning #EBCB8B;
+                @define-color Background #000000;
+                @define-color Foreground #ffffff;
+                @define-color Accent #88C0D0;
+                @define-color Error #BF616A;
+                @define-color Warning #EBCB8B;
 
-      * {
-        all: initial;
-        border: none;
-        border-radius: 0;
-        min-height: 0;
-        min-width: 0;
-        font-family: "Material Design Icons", "Roboto" ,monospace;
-        font-size: 1rem;
+                * {
+                  all: initial;
+                  border: none;
+                  border-radius: 0;
+                  min-height: 0;
+                  min-width: 0;
+                  font-family: "Material Design Icons" ,monospace;
+                  font-size: 1rem;
+                }
+
+                window#waybar {
+                  background-color: alpha(@Background, 0.2);
+                }
+
+                #custom-search {
+                  background-image: url("${snowflake}");
+                  background-size: 65%;
+                  margin-top: 35px;
+                  padding-top: 25px;
+                  margin: 5px;
+                  margin-bottom: 0;
+                  background-position: center;
+                  background-repeat: no-repeat;
+                }
+
+                #workspaces {
+                  background-color: alpha(@Background, 0.2);
+                  border-radius: 4px;
+                  margin: 0.41em 0.21em;
+                  padding: 0.41em 0;
+              box-shadow: inset 0 -3px transparent;
+              transition: all 400ms cubic-bezier(0.250, 0.250, 0.555, 1.425);
+                }
+
+                #workspaces button {
+                  margin: 0 0.82em;
+                }
+
+                #workspaces button:hover {
+                  box-shadow: inherit;
+                  text-shadow: inherit;
+                }
+
+                #workspaces button label {
+                  color: alpha(@Foreground, 0.8);
+                }
+
+                #workspaces button.empty label {
+                  color: alpha(@Foreground, 0.4);
+                }
+
+                #workspaces button.urgent label {
+                  color: alpha(@Error, 0.8);
+                }
+
+                #workspaces button.special label {
+                  color: alpha(@Warning, 0.8);
+                  text-shadow:
+                    0 0 0.14em @Warning,
+                    0 0 0.27em @Warning,
+                    0 0 0.41em @Warning,
+                    0 0 0.55em @Warning,
+                    0 0 0.68em @Warning;
+                }
+
+                #user,
+                #workspaces button.active label {
+                  color: alpha(@Accent, 0.8);
+                  text-shadow:
+                    0 0 0.14em @Accent,
+                    0 0 0.27em @Accent,
+                    0 0 0.41em @Accent,
+                    0 0 0.55em @Accent,
+                    0 0 0.68em @Accent;
+                }
+
+                  #clock {
+        font-weight: 700;
+        font-family: "Iosevka Term";
+        padding: 5px 0px 5px 0px;
       }
 
-      window#waybar {
-        background-color: alpha(@Background, 0.2);
-      }
+                #backlight,
+                #backlight-slider,
+                #battery,
+                #clock,
+                #clock.date,
+                #window,
+                #custom-lock,
+                #custom-power,
+                #custom-reboot,
+                #custom-suspend,
+                #custom-weather,
+                #custom-quit,
+                #network,
+                #pulseaudio,
+                #pulseaudio-slider,
+                #pulseaudio.microphone,
+                #tray,
+                #user {
+                  color: alpha(@Foreground, 0.8);
+                  background-color: alpha(@Background, 0.2);
+                  border-radius: 4px;
+                  margin: 0.31em 0.21em;
+                  padding: 0.41em 0.82em;
+                }
 
-      #custom-search {
-        margin: 0 0.41em;
-        padding: 0.41em 0.82em;
-        background-image: url("${snowflake}");
-        background-size: 80%;
-        background-position: center;
-        background-repeat: no-repeat;
-      }
+                #backlight-slider slider,
+                #pulseaudio-slider slider {
+                  min-height: 0px;
+                  min-width: 0px;
+                  opacity: 0;
+                  background-image: none;
+                  border: none;
+                  box-shadow: none;
+                  margin: 0 0.68em;
+                }
 
-      #workspaces {
-        background-color: alpha(@Background, 0.2);
-        border-radius: 4px;
-        margin: 0.41em 0.21em;
-        padding: 0.41em 0.82em;
-      }
+                #backlight-slider trough,
+                #pulseaudio-slider trough {
+                  min-height: 5.2em;
+                  border-radius: 8px;
+                  background-color: alpha(@Background, 0.2);
+                }
 
-      #workspaces button {
-        margin: 0 0.82em;
-      }
+                #backlight-slider highlight {
+                  min-width: 0.68em;
+                  border-radius: 8px;
+                  background-color: alpha(#f9e2af, 0.8);
+                  box-shadow:
+                    0 0 0.14em #f9e2af,
+                    0 0 0.27em #f9e2af,
+                    0 0 0.41em #f9e2af,
+                    0 0 0.55em #f9e2af;
+                }
 
-      #workspaces button:hover {
-        box-shadow: inherit;
-        text-shadow: inherit;
-      }
+                #pulseaudio-slider highlight {
+                  min-width: 0.68em;
+                  border-radius: 8px;
+                  background-color: alpha(#94e2d5, 0.8);
+                  box-shadow:
+                    0 0 0.14em #94e2d5,
+                    0 0 0.27em #94e2d5,
+                    0 0 0.41em #94e2d5,
+                    0 0 0.55em #94e2d5;
+                }
 
-      #workspaces button label {
-        color: alpha(@Foreground, 0.8);
-      }
 
-      #workspaces button.empty label {
-        color: alpha(@Foreground, 0.4);
-      }
+          #battery.warning {
+            color: #fab387;
+          }
 
-      #workspaces button.urgent label {
-        color: alpha(@Error, 0.8);
-      }
+          #battery.critical:not(.charging) {
+            color: #f38ba8;
+          }
 
-      #workspaces button.special label {
-        color: alpha(@Warning, 0.8);
-        text-shadow:
-          0 0 0.14em @Warning,
-          0 0 0.27em @Warning,
-          0 0 0.41em @Warning,
-          0 0 0.55em @Warning,
-          0 0 0.68em @Warning;
-      }
+                tooltip {
+                  color: alpha(@Foreground, 0.8);
+                  background-color: alpha(@Background, 0.9);
+                  font-family: "Dosis", sans-serif;
+                  border-radius: 8px;
+                  padding: 1.37em;
+                  margin: 2.05em;
+                }
 
-      #user,
-      #workspaces button.active label {
-        color: alpha(@Accent, 0.8);
-        text-shadow:
-          0 0 0.14em @Accent,
-          0 0 0.27em @Accent,
-          0 0 0.41em @Accent,
-          0 0 0.55em @Accent,
-          0 0 0.68em @Accent;
-      }
-
-      #backlight,
-      #backlight-slider,
-      #battery,
-      #clock,
-      #clock.date,
-      #custom-lock,
-      #custom-power,
-      #custom-reboot,
-      #custom-suspend,
-      #custom-quit,
-      #network,
-      #pulseaudio,
-      #pulseaudio-slider,
-      #pulseaudio.microphone,
-      #tray,
-      #user {
-        color: alpha(@Foreground, 0.8);
-        background-color: alpha(@Background, 0.2);
-        border-radius: 4px;
-        margin: 0.41em 0.21em;
-        padding: 0.41em 0.82em;
-      }
-
-      #backlight-slider slider,
-      #pulseaudio-slider slider {
-        min-height: 0px;
-        min-width: 0px;
-        opacity: 0;
-        background-image: none;
-        border: none;
-        box-shadow: none;
-        margin: 0 0.68em;
-      }
-
-      #backlight-slider trough,
-      #pulseaudio-slider trough {
-        min-height: 0.68em;
-        min-width: 5.47em;
-        border-radius: 8px;
-        background-color: alpha(@Background, 0.2);
-      }
-
-      #backlight-slider highlight,
-      #pulseaudio-slider highlight {
-        min-width: 0.68em;
-        border-radius: 8px;
-        background-color: alpha(@Accent, 0.8);
-        box-shadow:
-          0 0 0.14em @Accent,
-          0 0 0.27em @Accent,
-          0 0 0.41em @Accent,
-          0 0 0.55em @Accent;
-      }
-
-      tooltip {
-        color: alpha(@Foreground, 0.8);
-        background-color: alpha(@Background, 0.2);
-        font-family: "Dosis", sans-serif;
-        border-radius: 8px;
-        padding: 1.37em;
-        margin: 2.05em;
-      }
-
-      tooltip label {
-        font-family: "Dosis", sans-serif;
-        padding: 1.37em;
-      }
+                tooltip label {
+                  font-family: "Dosis", sans-serif;
+                  padding: 1.37em;
+                }
     '';
   };
 }
