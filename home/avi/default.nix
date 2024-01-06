@@ -14,6 +14,8 @@
       ./wm
       ./gtk.nix
       ./vscode.nix
+      ./spotify.nix
+      ./gtklock.nix
     ]
     ++ (builtins.attrValues outputs.homeManagerModules);
 

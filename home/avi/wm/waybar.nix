@@ -365,6 +365,8 @@ in {
             "custom/power"
             "custom/suspend"
             "custom/reboot"
+            "custom/lock"
+            "custom/quit"
           ];
         };
         "custom/quit" = {

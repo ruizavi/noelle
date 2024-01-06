@@ -48,6 +48,9 @@
       vulkan-validation-layers
       vulkan-tools
     ];
+    etc."greetd/environments".text = ''
+      Hyprland
+    '';
   };
 
   hardware = {
@@ -87,17 +90,14 @@
     };
 
     upower.enable = true;
-
-    greetd = let
-      session = {
-        command = "${lib.getExe config.programs.hyprland.package}";
-        user = "avi";
-      };
-    in {
+    greetd = {
       enable = true;
-      settings = {
-        default_session = session;
-        # initial_session = session;
+      settings = rec {
+        initial_session = {
+          command = "Hyprland";
+          user = "avi";
+        };
+        default_session = initial_session;
       };
     };
 

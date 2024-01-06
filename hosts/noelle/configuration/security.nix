@@ -1,4 +1,19 @@
 {pkgs, ...}: {
+  services = {
+    gnome = {
+      glib-networking.enable = true;
+      gnome-keyring.enable = true;
+    };
+    logind = {
+      lidSwitch = "suspend-then-hibernate";
+      lidSwitchExternalPower = "lock";
+      extraConfig = ''
+        HandlePowerKey=suspend-then-hibernate
+        HibernateDelaySec=3600
+      '';
+    };
+  };
+
   security = {
     apparmor = {
       enable = true;
@@ -21,11 +36,6 @@
           value = "1048576";
         }
       ];
-
-      services = {
-        greetd.enableGnomeKeyring = true;
-        login.enableGnomeKeyring = true;
-      };
     };
 
     polkit.enable = true;
