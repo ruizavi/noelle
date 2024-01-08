@@ -28,6 +28,11 @@
   nixpkgs = {
     config = {
       allowUnfree = true;
+      allowInsecure = true;
     };
   };
+
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-25.9.0"
+  ];
 }

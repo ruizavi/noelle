@@ -11,7 +11,10 @@ in {
     initialPassword = "nixos";
     isNormalUser = true;
     uid = 1000;
-    shell = pkgs.zsh;
+    shell =
+      if config.services.greetd.enable
+      then pkgs.zsh
+      else pkgs.bash;
     extraGroups =
       [
         "wheel"
@@ -24,6 +27,7 @@ in {
         "networkmanager"
         "mysql"
         "git"
+        "vboxusers"
       ];
 
     packages = [pkgs.home-manager];

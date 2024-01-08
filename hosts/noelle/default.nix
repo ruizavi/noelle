@@ -21,6 +21,13 @@
     kernelModules = ["acpi_call"];
     extraModulePackages = with config.boot.kernelPackages; [acpi_call];
 
+    # kernelPatches = [
+    #   {
+    #     patch = ./sound.patch;
+    #     name = "sound_hp_envy_x360";
+    #   }
+    # ];
+
     loader = {
       efi = {
         canTouchEfiVariables = true;
@@ -87,6 +94,11 @@
         CPU_SCALING_GOVERNOR_ON_AC = "performance";
         CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
       };
+    };
+
+    gnome = {
+      glib-networking.enable = true;
+      gnome-keyring.enable = true;
     };
 
     upower.enable = true;

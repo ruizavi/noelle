@@ -16,6 +16,7 @@
       ./vscode.nix
       ./spotify.nix
       ./gtklock.nix
+      ./zathura.nix
     ]
     ++ (builtins.attrValues outputs.homeManagerModules);
 
@@ -42,9 +43,14 @@
 
     config = {
       allowUnfree = true;
+      allowInsecure = true;
       allowUnfreePredicate = _: true;
     };
   };
+
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-25.9.0"
+  ];
 
   programs.home-manager.enable = true;
 
@@ -55,7 +61,7 @@
 
     packages = with pkgs; [
       spotify
-      appflowy
+      obsidian
     ];
   };
 }

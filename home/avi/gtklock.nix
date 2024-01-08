@@ -3,7 +3,7 @@
 
   xdg.configFile."gtklock/style.css".text = ''
     window {
-      background: rgba(0, 0, 0, .5);
+      background: rgba(0, 0, 0, .9);
       font-family: Lexend;
     }
 

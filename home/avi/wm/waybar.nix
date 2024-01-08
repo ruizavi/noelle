@@ -362,11 +362,11 @@ in {
             children-class = "power-child";
           };
           modules = [
+            "custom/lock"
+            "custom/quit"
             "custom/power"
             "custom/suspend"
             "custom/reboot"
-            "custom/lock"
-            "custom/quit"
           ];
         };
         "custom/quit" = {
